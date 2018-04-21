@@ -33,7 +33,8 @@ export default {
       snackbar: false,
       random_name: "",
       avatar: "",
-      roll_success: false
+      roll_success: false,
+      // avatar_img_arr:[],
     };
   },
   computed: {
@@ -42,8 +43,24 @@ export default {
       return this.userString.split(/[,|，]/);
     }
   },
-  mounted() {},
+  mounted() {
+    this.preloadAvatarImages();
+  },
   methods: {
+    preloadAvatarImages(){
+      var promises = new Array(10).map((ele,index)=>{
+        return new Promise((res,rej)=>{
+          const image = new Image();
+          image.onload=()=>res;
+          image.onerror=()=>rej(index);
+          image.src = `./static/avatar/a${index}.png`;
+        });
+      });
+
+      Promise.all(promises)
+      .then(()=>console.log('all images preload!'))
+      .catch((index)=>console.log(`cannot load ./static/avatar/a${index}.png`));
+    },
     open() {
       this.trigger = !this.trigger;
       this.showInput = !this.showInput;
@@ -77,7 +94,7 @@ export default {
         let ranIndex = Math.floor(Math.random() * len);
         this.random_name = this.userArr[ranIndex];
 
-        this.avatar = `/static/avatar/a${Math.floor(Math.random() * 10)}.png`;
+        this.avatar = `./static/avatar/a${Math.floor(Math.random() * 10)}.png`;
       }, 100);
     }
   }
